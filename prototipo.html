@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Notas y Categorías Final</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .notif-card {
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: #000;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-size: medium;
+      font-weight: 600;
+    }
+
+    body:not(.dark-mode) .card {
+      background-color: #e9ecef;
+      color: #000;
+      border-color: #ced4da;
+    }
+
+    body:not(.dark-mode) .form-control,
+    body:not(.dark-mode) .form-select,
+    body:not(.dark-mode) textarea {
+      background-color: #fff;
+      color: #000;
+      border-color: #ced4da;
+    }
+
+    body:not(.dark-mode) .btn-outline-dark {
+      color: #000;
+      border-color: #000;
+    }
+
+    body:not(.dark-mode) .btn-outline-dark:hover {
+      background-color: #000;
+      color: #fff;
+    }
+
+    body:not(.dark-mode) .notif-card {
+      background-color: #ffffff;
+      color: #000;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #f1f1f1;
+    }
+
+    body.dark-mode .card {
+      background-color: #1e1e1e;
+      color: #f1f1f1;
+      border-color: #444;
+    }
+
+    body.dark-mode .form-control,
+    body.dark-mode .form-select,
+    body.dark-mode textarea {
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+      border-color: #444;
+    }
+
+    body.dark-mode .nav-tabs .nav-link.active {
+      background-color: #333;
+      color: #f1f1f1 !important;
+    }
+
+    body.dark-mode .nav-tabs .nav-link {
+      color: #ccc !important;
+    }
+
+    body.dark-mode .btn-outline-dark {
+      color: #f1f1f1;
+      border-color: #f1f1f1;
+    }
+
+    body.dark-mode .btn-outline-dark:hover {
+      background-color: #f1f1f1;
+      color: #121212;
+    }
+
+    body.dark-mode .notif-card {
+      color: #000;
+    }
+
+    body.dark-mode ::placeholder {
+      color: #bbb;
+    }
+
+    body.dark-mode ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    body.dark-mode ::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 4px;
+    }
+
+    #contenedorNotas .col-12 {
+      width: 260px;
+      margin: 10px;
+    }
+
+    #contenedorNotas {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .texto-recordatorio {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    body.dark-mode .texto-recordatorio {
+      color: #bbb;
+    }
+
+    .texto-preview {
+      color: #555;
+      font-size: 0.9em;
+      margin-bottom: 4px;
+      min-height: 1.2em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body.dark-mode .texto-preview {
+      color: #bbb;
+    }
+  </style>
+</head>
+
+<body class="container py-4">
+  <main>
+    <!-- Login -->
+    <div id="seccionLogin" class="container py-5">
+      <div class="card mx-auto" style="max-width: 400px;">
+        <div class="card-body">
+          <h4 class="text-center mb-3">Iniciar Sesión</h4>
+          <input id="loginUser" type="text" class="form-control mb-2" placeholder="Usuario">
+          <input id="loginPass" type="password" class="form-control mb-2" placeholder="Contraseña">
+          <button class="btn btn-primary w-100 mb-2" onclick="iniciarSesion()">Entrar</button>
+          <p class="text-center mb-0">¿No tienes cuenta?
+            <a href="#" onclick="mostrarRegistro()">Regístrate</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registro -->
+    <div id="seccionRegistro" class="container py-5 d-none">
+      <div class="card mx-auto" style="max-width: 400px;">
+        <div class="card-body">
+          <h4 class="text-center mb-3">Crear Cuenta</h4>
+          <input id="regUser" type="text" class="form-control mb-2" placeholder="Nuevo usuario" maxlength="15">
+          <input id="regPass" type="password" class="form-control mb-2" placeholder="Contraseña">
+          <button class="btn btn-success w-100 mb-2" onclick="registrarUsuario()">Registrar</button>
+          <p class="text-center mb-0">¿Ya tienes cuenta?
+            <a href="#" onclick="mostrarLogin()">Inicia sesión</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="app" class="d-none">
+      <div>
+        <h1 class="text-center font-weight-bold">~ WONDER OF WRITE ~</h1>
+      </div>
+      <ul class="nav nav-tabs mb-4" id="mainTabs">
+        <li class="nav-item">
+          <span class="nav-link disabled" id="usuarioActivo"></span>
+        </li>
+        <li class="nav-item"><a class="nav-link active" href="#" onclick="mostrarSeccion('notas')">Notas</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="mostrarSeccion('categorias')">Categorías</a></li>
+        <li class="nav-item ms-auto"><button id="btnTema" class="btn btn-outline-dark btn-sm">Modo Oscuro</button></li>
+        <li class="nav-item ms-2"><button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()">Cerrar
+            sesión</button></li>
+      </ul>
+
+
+      <!-- Sección Notas -->
+      <div id="seccionNotas">
+        <div class="mb-3">
+          <input type="text" id="nuevoTitulo" class="form-control mb-2" placeholder="Título de la nota">
+          <textarea id="nuevoContenido" class="form-control mb-2" placeholder="Contenido de la nota"></textarea>
+          <button class="btn btn-primary" onclick="agregarNota()">Agregar Nota</button>
+        </div>
+        <div class="mb-3 d-flex gap-2 align-items-center">
+          <label for="filtroCategoria" class="form-label mb-0">Filtrar por categoría:</label>
+          <select id="filtroCategoria" class="form-select form-select-sm w-auto" onchange="renderizarNotas()">
+            <option value="">Todas</option>
+          </select>
+        </div>
+        <div id="contenedorNotas" class="row gy-3"></div>
+      </div>
+
+      <!-- Sección Categorías -->
+      <div id="seccionCategorias" class="d-none">
+        <div class="mb-3 border p-3">
+          <h5>Crear Categoría</h5>
+          <input type="text" id="nombreCategoria" class="form-control mb-2" placeholder="Nombre de la categoría">
+          <select id="colorCategoria" class="form-select mb-2">
+            <option value="danger">Rojo</option>
+            <option value="primary">Azul</option>
+            <option value="success" selected>Verde</option>
+            <option value="warning">Amarillo</option>
+            <option value="info">Celeste</option>
+          </select>
+          <button class="btn btn-secondary" onclick="agregarCategoria()">Agregar Categoría</button>
+        </div>
+        <div id="contenedorCategorias" class="row gy-3"></div>
+      </div>
+
+      <div id="notificaciones" style="position: fixed; top: 1rem; right: 1rem; z-index: 1050; width: 300px;"></div>
+      <audio id="sonidoNotif" src="https://www.soundjay.com/buttons/sounds/button-3.mp3" preload="auto"></audio>
+    </div>
+  </main>
+
+  <script>
+    let notas = [];
+    let categorias = [];
+    let usuarioActual = localStorage.getItem("usuarioActual");
+    let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+    // -------------------- CARGAR DATOS USUARIO --------------------
+    function cargarDatosUsuario() {
+      if (!usuarioActual) return;
+      notas = JSON.parse(localStorage.getItem("notas_" + usuarioActual)) || [];
+      categorias = JSON.parse(localStorage.getItem("categorias_" + usuarioActual)) || [];
+    }
+
+    // -------------------- GUARDAR STORAGE --------------------
+    function guardarStorage() {
+      if (!usuarioActual) return;
+      localStorage.setItem("notas_" + usuarioActual, JSON.stringify(notas));
+      localStorage.setItem("categorias_" + usuarioActual, JSON.stringify(categorias));
+    }
+
+    // -------------------- SECCIONES --------------------
+    function mostrarSeccion(seccion) {
+      document.getElementById("seccionNotas").classList.toggle("d-none", seccion !== "notas");
+      document.getElementById("seccionCategorias").classList.toggle("d-none", seccion !== "categorias");
+      document.querySelectorAll('#mainTabs .nav-link').forEach(link => {
+        link.classList.toggle("active", link.textContent.toLowerCase() === seccion);
+      });
+    }
+
+    // -------------------- CATEGORÍAS --------------------
+    function agregarCategoria() {
+      const nombre = document.getElementById("nombreCategoria").value.trim();
+      const color = document.getElementById("colorCategoria").value;
+      if (!nombre) return alert("Ingresa un nombre");
+      if (categorias.length >= 5) return alert("Máximo 5 categorías");
+
+      categorias.push({ nombre, color });
+      guardarStorage();
+      document.getElementById("nombreCategoria").value = "";
+      renderizarCategorias();
+    }
+
+    function renderizarCategorias() {
+      const contenedor = document.getElementById("contenedorCategorias");
+      contenedor.innerHTML = "";
+      categorias.forEach((cat, index) => {
+        const div = document.createElement("div");
+        div.className = `col-12 categoria-card card p-2 border border-3 border-${cat.color}`;
+        div.innerHTML = `
+        <div class="d-flex align-items-center justify-content-between gap-2">
+            <input type="text" class="form-control form-control-sm nombre-cat" value="${cat.nombre}" disabled>
+            <select class="form-select form-select-sm color-cat d-none">
+                <option value="danger">Rojo</option>
+                <option value="primary">Azul</option>
+                <option value="success">Verde</option>
+                <option value="warning">Amarillo</option>
+                <option value="info">Celeste</option>
+            </select>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-warning btn-editar">Editar</button>
+                <button class="btn btn-sm btn-success btn-guardar d-none">Guardar</button>
+                <button class="btn btn-sm btn-secondary btn-cancelar d-none">Cancelar</button>
+                <button class="btn btn-sm btn-danger btn-eliminar">Eliminar</button>
+            </div>
+        </div>`;
+
+        const inputNombre = div.querySelector(".nombre-cat");
+        const selectColor = div.querySelector(".color-cat");
+        const btnEditar = div.querySelector(".btn-editar");
+        const btnGuardar = div.querySelector(".btn-guardar");
+        const btnCancelar = div.querySelector(".btn-cancelar");
+        const btnEliminar = div.querySelector(".btn-eliminar");
+
+        selectColor.value = cat.color;
+        const valorOriginal = { nombre: cat.nombre, color: cat.color };
+
+        btnEditar.onclick = () => {
+          inputNombre.disabled = false;
+          selectColor.classList.remove("d-none");
+          btnEditar.classList.add("d-none");
+          btnGuardar.classList.remove("d-none");
+          btnCancelar.classList.remove("d-none");
+        };
+        btnGuardar.onclick = () => {
+          const nuevoNombre = inputNombre.value.trim();
+          const nuevoColor = selectColor.value;
+          if (!nuevoNombre) return alert("Nombre no puede estar vacío");
+
+          categorias[index] = { nombre: nuevoNombre, color: nuevoColor };
+          notas.forEach(n => { if (n.categoria === valorOriginal.nombre) n.categoria = nuevoNombre; });
+          guardarStorage();
+          renderizarCategorias();
+          renderizarNotas();
+        };
+        btnCancelar.onclick = () => {
+          inputNombre.value = valorOriginal.nombre;
+          selectColor.value = valorOriginal.color;
+          inputNombre.disabled = true;
+          selectColor.classList.add("d-none");
+          btnEditar.classList.remove("d-none");
+          btnGuardar.classList.add("d-none");
+          btnCancelar.classList.add("d-none");
+        };
+        btnEliminar.onclick = () => {
+          if (confirm("¿Eliminar categoría?")) {
+            notas.forEach(n => { if (n.categoria === cat.nombre) n.categoria = ''; });
+            categorias.splice(index, 1);
+            guardarStorage();
+            renderizarCategorias();
+            renderizarNotas();
+          }
+        };
+        contenedor.appendChild(div);
+      });
+      actualizarFiltroCategorias();
+    }
+
+    function actualizarFiltroCategorias() {
+      const filtro = document.getElementById("filtroCategoria");
+      filtro.innerHTML = '<option value="">Todas</option>';
+      categorias.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat.nombre;
+        opt.textContent = cat.nombre;
+        filtro.appendChild(opt);
+      });
+    }
+
+    // -------------------- NOTAS --------------------
+    function agregarNota() {
+      const titulo = document.getElementById("nuevoTitulo").value.trim();
+      const contenido = document.getElementById("nuevoContenido").value.trim();
+      if (!titulo || !contenido) return alert("Rellena título y contenido");
+
+      notas.push({ titulo, contenido, categoria: '', recordatorio: '', notificado: false });
+      guardarStorage();
+      document.getElementById("nuevoTitulo").value = "";
+      document.getElementById("nuevoContenido").value = "";
+      renderizarNotas();
+    }
+
+    function colorSegunCategoria(nombre) {
+      const cat = categorias.find(c => c.nombre === nombre);
+      return cat ? cat.color : 'secondary';
+    }
+
+    function renderizarNotas() {
+      const contenedor = document.getElementById("contenedorNotas");
+      contenedor.innerHTML = "";
+      contenedor.className = "d-flex flex-wrap justify-content-start gap-3";
+      const filtro = document.getElementById("filtroCategoria").value;
+      const darkMode = document.body.classList.contains("dark-mode");
+
+      notas.forEach((nota, index) => {
+        if (filtro && nota.categoria !== filtro) return;
+
+        const colorBorde = colorSegunCategoria(nota.categoria);
+        const bordeIzquierdo = `6px solid var(--bs-${colorBorde})`;
+        let resumen = nota.contenido.split(" ").slice(0, 6).join(" ");
+        if (nota.contenido.split(" ").length > 6) resumen += "...";
+        const fecha = nota.recordatorio ? new Date(nota.recordatorio).toLocaleString() : "Sin recordatorio";
+
+        const card = document.createElement("div");
+        card.className = `card border-${colorBorde} shadow-sm`;
+        card.style.width = "220px";
+        card.style.height = "190px";
+        card.style.overflow = "hidden";
+        card.style.borderLeft = bordeIzquierdo;
+        card.style.backgroundColor = darkMode ? "#2c2c2c" : "white";
+        card.style.color = darkMode ? "white" : "black";
+        card.innerHTML = `
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <h6 class="card-title text-truncate mb-1">${nota.titulo}</h6>
+                    <p class="texto-preview mb-1">${resumen}</p>
+                    <small class="texto-recordatorio d-block ${darkMode ? 'text-light' : 'text-muted'}">${fecha}</small>
+                </div>
+                <div class="mt-2">
+                    <button class="btn btn-primary btn-sm w-100" onclick="abrirNotaModal(${index})">Abrir nota</button>
+                </div>
+            </div>`;
+        contenedor.appendChild(card);
+      });
+    }
+
+    // -------------------- MODAL NOTA --------------------
+    function abrirNotaModal(index) {
+      const nota = notas[index];
+      const darkMode = document.body.classList.contains("dark-mode");
+
+      const overlay = document.createElement("div");
+      overlay.id = "notaModalOverlay";
+      overlay.style.position = "fixed";
+      overlay.style.top = 0;
+      overlay.style.left = 0;
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.backgroundColor = darkMode ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.6)";
+      overlay.style.display = "flex";
+      overlay.style.justifyContent = "center";
+      overlay.style.alignItems = "center";
+      overlay.style.zIndex = 9999;
+
+      const colorBorde = nota.categoria ? `var(--bs-${colorSegunCategoria(nota.categoria)})` : "transparent";
+      const modal = document.createElement("div");
+      modal.style.backgroundColor = darkMode ? "#2c2c2c" : "white";
+      modal.style.color = darkMode ? "white" : "#000";
+      modal.style.padding = "20px";
+      modal.style.borderRadius = "8px";
+      modal.style.width = "95%";
+      modal.style.maxWidth = "700px";
+      modal.style.maxHeight = "95%";
+      modal.style.overflowY = "auto";
+      modal.style.position = "relative";
+      modal.style.borderLeft = `6px solid ${colorBorde}`;
+
+      let recordatorioHTML = nota.recordatorio
+        ? `<small class="texto-recordatorio">⏰ Recordatorio: ${new Date(nota.recordatorio).toLocaleString()}</small>`
+        : `<small class="texto-recordatorio">Sin recordatorio</small>`;
+
+      modal.innerHTML = `
+        <button style="position:absolute;top:10px;right:10px;" class="btn-close ${darkMode ? 'btn-close-white' : ''}"></button>
+        <input type="text" class="form-control mb-2 titulo" value="${nota.titulo}" disabled style="background-color:${darkMode ? '#3a3a3a' : 'white'}; color:${darkMode ? 'white' : 'black'};">
+        <textarea class="form-control mb-2 contenido" rows="6" disabled style="background-color:${darkMode ? '#3a3a3a' : 'white'}; color:${darkMode ? 'white' : 'black'};">${nota.contenido}</textarea>
+        <div class="mb-2">${recordatorioHTML}</div>
+        <div class="d-flex gap-2 mt-2 flex-wrap">
+            <select class="form-select form-select-sm categoria-editar d-none" style="background-color:${darkMode ? '#3a3a3a' : 'white'}; color:${darkMode ? 'white' : 'black'};">
+                <option value="">Sin categoría</option>
+                ${categorias.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join('')}
+            </select>
+            <input type="date" class="form-control form-control-sm d-none fecha-editar" style="background-color:${darkMode ? '#3a3a3a' : 'white'}; color:${darkMode ? 'white' : 'black'};">
+            <input type="time" class="form-control form-control-sm d-none hora-editar" style="background-color:${darkMode ? '#3a3a3a' : 'white'}; color:${darkMode ? 'white' : 'black'};">
+            <button class="btn btn-warning btn-editar">Editar</button>
+            <button class="btn btn-success btn-guardar d-none">Guardar</button>
+            <button class="btn btn-secondary btn-cancelar d-none">Cancelar</button>
+            <button class="btn btn-danger btn-eliminar">Eliminar</button>
+        </div>
+    `;
+
+      const btnCerrar = modal.querySelector(".btn-close");
+      const inputTitulo = modal.querySelector(".titulo");
+      const textareaContenido = modal.querySelector(".contenido");
+      const selectCategoria = modal.querySelector(".categoria-editar");
+      const btnEditar = modal.querySelector(".btn-editar");
+      const btnGuardar = modal.querySelector(".btn-guardar");
+      const btnCancelar = modal.querySelector(".btn-cancelar");
+      const btnEliminar = modal.querySelector(".btn-eliminar");
+      const inputFecha = modal.querySelector(".fecha-editar");
+      const inputHora = modal.querySelector(".hora-editar");
+
+      selectCategoria.value = nota.categoria;
+      if (nota.recordatorio) {
+        const fechaObj = new Date(nota.recordatorio);
+        inputFecha.value = fechaObj.toISOString().split('T')[0];
+        inputHora.value = fechaObj.toTimeString().split(' ')[0].slice(0, 5);
+      }
+
+      btnCerrar.onclick = () => document.body.removeChild(overlay);
+
+      btnEditar.onclick = () => {
+        inputTitulo.disabled = false;
+        textareaContenido.disabled = false;
+        selectCategoria.classList.remove("d-none");
+        inputFecha.classList.remove("d-none");
+        inputHora.classList.remove("d-none");
+        btnEditar.classList.add("d-none");
+        btnGuardar.classList.remove("d-none");
+        btnCancelar.classList.remove("d-none");
+      };
+
+      btnGuardar.onclick = () => {
+        let recordatorioValue = "";
+        if (inputFecha.value && inputHora.value) {
+          recordatorioValue = new Date(inputFecha.value + "T" + inputHora.value).toISOString();
+        }
+        notas[index] = {
+          titulo: inputTitulo.value,
+          contenido: textareaContenido.value,
+          categoria: selectCategoria.value,
+          recordatorio: recordatorioValue,
+          notificado: false
+        };
+        guardarStorage();
+        renderizarNotas();
+        document.body.removeChild(overlay);
+      };
+
+      btnCancelar.onclick = () => {
+        // Restaurar valores originales
+        inputTitulo.value = nota.titulo;
+        textareaContenido.value = nota.contenido;
+        selectCategoria.value = nota.categoria;
+        if (nota.recordatorio) {
+          const fechaObj = new Date(nota.recordatorio);
+          inputFecha.value = fechaObj.toISOString().split('T')[0];
+          inputHora.value = fechaObj.toTimeString().split(' ')[0].slice(0, 5);
+        } else {
+          inputFecha.value = '';
+          inputHora.value = '';
+        }
+        inputTitulo.disabled = true;
+        textareaContenido.disabled = true;
+        selectCategoria.classList.add("d-none");
+        inputFecha.classList.add("d-none");
+        inputHora.classList.add("d-none");
+        btnEditar.classList.remove("d-none");
+        btnGuardar.classList.add("d-none");
+        btnCancelar.classList.add("d-none");
+      };
+
+      btnEliminar.onclick = () => {
+        if (confirm("¿Eliminar nota?")) {
+          notas.splice(index, 1);
+          guardarStorage();
+          renderizarNotas();
+          document.body.removeChild(overlay);
+        }
+      };
+
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+    }
+
+    // -------------------- NOTIFICACIONES --------------------
+    function mostrarNotificacion(nota) {
+      const cont = document.getElementById("notificaciones");
+      const darkMode = document.body.classList.contains("dark-mode");
+
+      // Crear div de notificación
+      const div = document.createElement("div");
+      const colorBorde = colorSegunCategoria(nota.categoria);
+      div.className = `shadow-sm position-relative mb-2 p-2 rounded`;
+      div.style.backgroundColor = darkMode ? "#2c2c2c" : "#fff";
+      div.style.color = darkMode ? "#fff" : "#000";
+      div.style.borderLeft = `6px solid var(--bs-${colorBorde})`;
+      div.style.minWidth = "250px";
+      div.style.maxWidth = "300px";
+      div.style.boxShadow = "0 4px 10px rgba(0,0,0,0.15)";
+      div.style.fontSize = "0.85rem";
+      div.style.display = "flex";
+      div.style.flexDirection = "column";
+      div.style.gap = "4px";
+
+      // Resumen corto del contenido
+      let resumen = nota.contenido.split(" ").slice(0, 8).join(" ");
+      if (nota.contenido.split(" ").length > 8) resumen += "...";
+
+      // HTML de la notificación
+      div.innerHTML = `
+        <button class="btn-close position-absolute top-0 end-0 m-1 ${darkMode ? 'btn-close-white' : ''}" aria-label="Cerrar"></button>
+        <strong>${nota.titulo}</strong>
+        <p class="mb-0 text-truncate">${resumen}</p>
+        <small class="${darkMode ? 'text-light' : 'text-muted'}">
+          ${nota.recordatorio ? new Date(nota.recordatorio).toLocaleTimeString() : ""}
+        </small>
+
+    `;
+
+      // Cerrar notificación al hacer click en X
+      div.querySelector(".btn-close").onclick = () => cont.removeChild(div);
+
+      // Agregar al contenedor
+      cont.appendChild(div);
+
+      // Reproducir sonido
+      const audio = document.getElementById("sonidoNotif");
+      audio.play();
+
+      // Auto eliminar después de 40s
+      setTimeout(() => {
+        if (cont.contains(div)) cont.removeChild(div);
+      }, 40000);
+    }
+
+    // -------------------- RECORDATORIOS --------------------
+    setInterval(() => {
+      const ahora = new Date();
+      notas.forEach(nota => {
+        if (nota.recordatorio && !nota.notificado) {
+          const fecha = new Date(nota.recordatorio);
+          if (Math.abs(ahora - fecha) < 1000) {
+            mostrarNotificacion(nota);
+            nota.notificado = true;
+            nota.recordatorio = '';
+            guardarStorage();
+            renderizarNotas();
+          }
+        }
+      });
+    }, 1000);
+
+    // -------------------- TEMA --------------------
+    if (localStorage.getItem("tema") === "dark") {
+      document.body.classList.add("dark-mode");
+      document.getElementById("btnTema").textContent = "Modo Claro";
+    }
+    document.getElementById("btnTema").onclick = () => {
+      const body = document.body;
+      const btn = document.getElementById("btnTema");
+      body.classList.toggle("dark-mode");
+      if (body.classList.contains("dark-mode")) {
+        btn.textContent = "Modo Claro";
+        localStorage.setItem("tema", "dark");
+      } else {
+        btn.textContent = "Modo Oscuro";
+        localStorage.setItem("tema", "light");
+      }
+      // VOLVER A RENDERIZAR ELEMENTOS QUE CAMBIAN CON EL TEMA
+      renderizarNotas();
+      renderizarCategorias();
+    };
+
+
+    // -------------------- USUARIOS --------------------
+    function guardarUsuarios() { localStorage.setItem("usuarios", JSON.stringify(usuarios)); }
+
+    function mostrarLogin() {
+      document.getElementById("seccionLogin").classList.remove("d-none");
+      document.getElementById("seccionRegistro").classList.add("d-none");
+    }
+
+    function mostrarRegistro() {
+      document.getElementById("seccionLogin").classList.add("d-none");
+      document.getElementById("seccionRegistro").classList.remove("d-none");
+    }
+
+    function iniciarSesion() {
+      const user = document.getElementById("loginUser").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
+      const encontrado = usuarios.find(u => u.username === user && u.password === pass);
+      if (encontrado) {
+        usuarioActual = user;
+        localStorage.setItem("usuarioActual", user);
+        cargarDatosUsuario();
+        mostrarApp();
+      } else alert("Usuario o contraseña incorrectos");
+    }
+
+    function registrarUsuario() {
+      let user = document.getElementById("regUser").value.trim();
+      const pass = document.getElementById("regPass").value.trim();
+
+      // Limitar a 15 caracteres por si alguien pega un string más largo
+      if (user.length > 15) user = user.slice(0, 15);
+
+      if (!user || !pass) return alert("Completa todos los campos");
+      if (usuarios.some(u => u.username === user)) return alert("El usuario ya existe");
+
+      usuarios.push({ username: user, password: pass });
+      guardarUsuarios();
+      alert("Usuario creado. Ahora puedes iniciar sesión.");
+      mostrarLogin();
+    }
+
+
+    function mostrarApp() {
+      document.getElementById("app").classList.remove("d-none");
+      document.getElementById("seccionLogin").classList.add("d-none");
+      document.getElementById("seccionRegistro").classList.add("d-none");
+      document.getElementById("usuarioActivo").textContent = " 👤 " + usuarioActual;
+      renderizarCategorias();
+      renderizarNotas();
+    }
+
+    function cerrarSesion() {
+      usuarioActual = null;
+      localStorage.removeItem("usuarioActual");
+      document.getElementById("app").classList.add("d-none");
+      document.getElementById("usuarioActivo").textContent = ""; // Limpiar usuario
+      mostrarLogin();
+    }
+
+    // -------------------- INICIO --------------------
+    cargarDatosUsuario();
+    if (usuarioActual) mostrarApp();
+    else mostrarLogin();
+
+    renderizarCategorias();
+    renderizarNotas();
+
+  </script>
+
+</body>
+
+</html>
